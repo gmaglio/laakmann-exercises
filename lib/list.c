@@ -50,6 +50,24 @@ int deleteIntLast(NodeInt *head) {
   return data;
 }
 
+void getLastElementsChar(NodeInt *head, int k) {
+  int counter = 0;
+
+  printf("last %d elements from list: ", k);
+
+  while(head->next != NULL) {
+    if (counter >= k) {
+      printf("%c", head->data);
+      if (head->next->next != NULL) {
+        printf(" -> ");
+      }
+    }
+    counter++;
+    head = head->next;
+  }
+  printf("\n");
+}
+
 int peekIntHead(NodeInt *head) {
   return head->data;
 }
@@ -62,10 +80,70 @@ int peekIntLast(NodeInt *head) {
   return itr->data;
 }
 
+void getIntPosLast(
+  NodeInt **dest_head, 
+  NodeInt *src_head,
+  int pos
+) {
+  int counter = 0;
+  NodeInt *itr = src_head;
+  while (itr->next != NULL) {
+    if (counter >= pos) {
+      insertIntHead(dest_head, itr->data);
+    }
+    itr=itr->next;
+    counter++;
+  }
+}
+
+void getIntHeadPos(
+  NodeInt *dest_head, 
+  NodeInt *src_head,
+  int pos
+) {
+  int counter = 0;
+  NodeInt *itr = src_head;
+  while (itr->next != NULL) {
+    if (counter < pos) {
+      insertIntLast(dest_head, itr->data);
+    }
+    itr=itr->next;
+    counter++;
+  }
+}
+
+
 void printIntList(NodeInt *head) {
   assert(head != NULL);
   NodeInt *itr = head;
   for(itr = head; itr->next != NULL; itr = itr->next) {
-    printf("%i\n", itr->data);
+    printf("%c", itr->data);
+    if (itr->next->next != NULL) {
+      printf(" -> ");
+    }
+  }
+  printf("\n");
+}
+
+int compareIntOrderedLists(NodeInt *head_a, NodeInt *head_b) {
+  if (lengthIntList(head_a) != lengthIntList(head_b)) {
+    return 0;
+  }
+  NodeInt *itr_a = head_a;
+  NodeInt *itr_b = head_b;
+  while(itr_a->next != NULL) {
+    itr_a = itr_a->next;
+    itr_b = itr_b->next;
+    if (itr_a->data != itr_b->data) {
+      return 0;
+    }
+  }
+  return 1;
+}
+
+void strToList(NodeInt *head, char *str, int length) {
+  int pos = 0;
+  for (pos = 0; pos < length; pos++) {
+    insertIntLast(head, str[pos]);
   }
 }

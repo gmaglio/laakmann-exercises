@@ -11,6 +11,10 @@ typedef struct _node_char {
   int data;
 } NodeChar;
 
+typedef struct _list {
+  NodeInt *head;  
+} List;
+
 void insertIntHead(NodeInt **head, int data);
 void insertIntLast(NodeInt *head, int data);
 void insertIntPosition(NodeInt *head, int pos, int data);
@@ -25,8 +29,25 @@ int peekIntLast(NodeInt *head);
 int popIntHead(NodeInt *head, int data); // will use peekHead and deleteHead;
 int popIntLast(NodeInt *head, int data); // will use peekLast and deleteLast;
 
+void getLastElementsChar(NodeInt *head, int k);
+
+void getIntPosLast(
+  NodeInt **dest_head, 
+  NodeInt *src_head,
+  int pos
+);
+void getIntHeadPos(
+  NodeInt *dest_head, 
+  NodeInt *src_head,
+  int pos
+);
+
 int lengthIntList(NodeInt *head);
 
 void printIntList(NodeInt *head);
+
+int compareIntOrderedLists(NodeInt *head_a, NodeInt *head_b);
+
+void strToList(NodeInt *head, char *str, int length);
 
 #endif
