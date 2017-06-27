@@ -1,6 +1,8 @@
 #ifndef LIST_H
 #define LIST_H
 
+#include <stdlib.h>
+
 typedef struct _node_int {
   struct _node_int *next;
   int data;
@@ -12,42 +14,43 @@ typedef struct _node_char {
 } NodeChar;
 
 typedef struct _list {
-  NodeInt *head;  
+  NodeInt *head;
+  size_t length;
 } List;
 
-void insertIntHead(NodeInt **head, int data);
-void insertIntLast(NodeInt *head, int data);
-void insertIntPosition(NodeInt *head, int pos, int data);
+void initList(List *list);
 
-int deleteIntHead(NodeInt **head);
-int deleteIntLast(NodeInt *head);
-int deleteIntPosition(NodeInt *head, int pos, int data);
+void insertIntHead(List *list, int data);
+void insertIntLast(List *list, int data);
+void insertIntPosition(List list, int pos, int data);
 
-int peekIntHead(NodeInt *head);
-int peekIntLast(NodeInt *head);
+int deleteIntHead(List *list);
+int deleteIntLast(List *list);
+void deleteIntMiddle(List *list, int data);
 
-int popIntHead(NodeInt *head, int data); // will use peekHead and deleteHead;
-int popIntLast(NodeInt *head, int data); // will use peekLast and deleteLast;
+int peekIntHead(List list);
+int peekIntLast(List list);
 
-void getLastElementsChar(NodeInt *head, int k);
+int popIntHead(List list, int data); // will use peekHead and deleteHead;
+int popIntLast(List list, int data); // will use peekLast and deleteLast;
+
+void getLastElementsChar(List list, int k);
 
 void getIntPosLast(
-  NodeInt **dest_head, 
-  NodeInt *src_head,
+  List *dest_list, 
+  List src_list,
   int pos
 );
 void getIntHeadPos(
-  NodeInt *dest_head, 
-  NodeInt *src_head,
+  List *dest_list,
+  List src_list,
   int pos
 );
 
-int lengthIntList(NodeInt *head);
+void printIntList(List list);
 
-void printIntList(NodeInt *head);
+int compareIntOrderedLists(List list_a, List list_b);
 
-int compareIntOrderedLists(NodeInt *head_a, NodeInt *head_b);
-
-void strToList(NodeInt *head, char *str, int length);
+void strToList(List *list, char *str, int length);
 
 #endif

@@ -3,43 +3,64 @@
 #include <stdio.h>
 #include <assert.h>
 
-void insertIntHead(NodeInt **head, int data) {
-  assert(*head != NULL);
-  NodeInt *new_head = malloc(sizeof(NodeInt));
-  new_head->next = *head;
-  new_head->data = data;
-  *head = new_head;
+void initList(List *list) {
+  list->head = malloc(sizeof(NodeInt));
+  list->head->next = NULL;
+  list->length = 0;
 }
 
-void insertIntLast(NodeInt *head, int data) {
-  assert(head != NULL);
-  NodeInt *itr = head;
+void insertIntHead(List *list, int data) {
+  assert(list->head != NULL);
+  NodeInt *new_head = malloc(sizeof(NodeInt));
+  new_head->next = list->head;
+  new_head->data = data;
+  list->head = new_head;
+  list->length++;
+}
+
+void insertIntLast(List *list, int data) {
+  assert(list->head != NULL);
+  NodeInt *itr = list->head;
   while (itr->next != NULL) {
     itr = itr->next;
   }
   itr->next = malloc(sizeof(NodeInt));
   itr->data = data;
+  list->length++;
 }
 
-int lengthIntList(NodeInt *head) {
-  int counter = 0;
-  NodeInt *itr = head;
-  for(itr = head; itr->next != NULL; itr = itr->next) {
-    counter++;
-  }
-  return counter;
+int lengthIntList(List list) {
+  return list.length;
 }
 
-int deleteIntHead(NodeInt **head) {
-  int data = (*head)->data;
-  NodeInt *old_head = *head;
-  *head = (*head)->next;
+int deleteIntHead(List *list) {
+  int data = list->head->data;
+  NodeInt *old_head = list->head;
+  list->head = list->head->next;
   free(old_head);
+  list->length--;
   return data;
 }
 
-int deleteIntLast(NodeInt *head) {
-  NodeInt *itr = head;
+// 2.3
+void deleteIntMiddle(List *list, int data) {
+  NodeInt *itr = list->head;
+  NodeInt *old_node = NULL;
+  do {
+    if (itr->next->data == data && 
+        itr->next->next != NULL) {
+      old_node = itr->next;
+      itr->next = itr->next->next;
+      free(old_node);
+
+    } else {
+      itr = itr->next;
+    }
+  } while (itr->next->next != NULL);
+}
+
+int deleteIntLast(List *list) {
+  NodeInt *itr = list->head;
   do { 
     itr = itr->next;
   } while (itr->next->next != NULL);
@@ -47,33 +68,34 @@ int deleteIntLast(NodeInt *head) {
   NodeInt *tmp = itr->next;
   itr->next = NULL;
   free(tmp);
+  list->length--;
   return data;
 }
 
-void getLastElementsChar(NodeInt *head, int k) {
+void getLastElementsChar(List list, int k) {
   int counter = 0;
 
   printf("last %d elements from list: ", k);
 
-  while(head->next != NULL) {
-    if (counter >= k) {
-      printf("%c", head->data);
-      if (head->next->next != NULL) {
+  while(list.head->next != NULL) {
+    if (counter >= (list.length - k)) {
+      printf("%c", list.head->data);
+      if (list.head->next->next != NULL) {
         printf(" -> ");
       }
     }
     counter++;
-    head = head->next;
+    list.head = list.head->next;
   }
   printf("\n");
 }
 
-int peekIntHead(NodeInt *head) {
-  return head->data;
+int peekIntHead(List list) {
+  return list.head->data;
 }
 
-int peekIntLast(NodeInt *head) {
-  NodeInt *itr = head;
+int peekIntLast(List list) {
+  NodeInt *itr = list.head;
   do { 
     itr = itr->next;
   } while (itr->next->next != NULL);
@@ -81,15 +103,15 @@ int peekIntLast(NodeInt *head) {
 }
 
 void getIntPosLast(
-  NodeInt **dest_head, 
-  NodeInt *src_head,
+  List *dest_list, 
+  List src_list,
   int pos
 ) {
   int counter = 0;
-  NodeInt *itr = src_head;
+  NodeInt *itr = src_list.head;
   while (itr->next != NULL) {
     if (counter >= pos) {
-      insertIntHead(dest_head, itr->data);
+      insertIntHead(dest_list, itr->data);
     }
     itr=itr->next;
     counter++;
@@ -97,27 +119,26 @@ void getIntPosLast(
 }
 
 void getIntHeadPos(
-  NodeInt *dest_head, 
-  NodeInt *src_head,
+  List *dest_list, 
+  List src_list,
   int pos
 ) {
   int counter = 0;
-  NodeInt *itr = src_head;
+  NodeInt *itr = src_list.head;
   while (itr->next != NULL) {
     if (counter < pos) {
-      insertIntLast(dest_head, itr->data);
+      insertIntLast(dest_list, itr->data);
     }
     itr=itr->next;
     counter++;
   }
 }
 
-
-void printIntList(NodeInt *head) {
-  assert(head != NULL);
-  NodeInt *itr = head;
-  for(itr = head; itr->next != NULL; itr = itr->next) {
-    printf("%c", itr->data);
+void printIntList(List list) {
+  assert(list.head != NULL);
+  NodeInt *itr = list.head;
+  for(itr = list.head; itr->next != NULL; itr = itr->next) {
+    printf("%i", itr->data);
     if (itr->next->next != NULL) {
       printf(" -> ");
     }
@@ -125,12 +146,12 @@ void printIntList(NodeInt *head) {
   printf("\n");
 }
 
-int compareIntOrderedLists(NodeInt *head_a, NodeInt *head_b) {
-  if (lengthIntList(head_a) != lengthIntList(head_b)) {
+int compareIntOrderedLists(List list_a, List list_b) {
+  if (lengthIntList(list_a) != lengthIntList(list_b)) {
     return 0;
   }
-  NodeInt *itr_a = head_a;
-  NodeInt *itr_b = head_b;
+  NodeInt *itr_a = list_a.head;
+  NodeInt *itr_b = list_b.head;
   while(itr_a->next != NULL) {
     itr_a = itr_a->next;
     itr_b = itr_b->next;
@@ -141,9 +162,9 @@ int compareIntOrderedLists(NodeInt *head_a, NodeInt *head_b) {
   return 1;
 }
 
-void strToList(NodeInt *head, char *str, int length) {
+void strToList(List *list, char *str, int length) {
   int pos = 0;
   for (pos = 0; pos < length; pos++) {
-    insertIntLast(head, str[pos]);
+    insertIntLast(list, str[pos]);
   }
 }
